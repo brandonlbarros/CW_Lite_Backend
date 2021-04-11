@@ -16,6 +16,10 @@ router.post('/signup', async (req, res) => {
     }
 })
 
+router.get('/check', async (req, res) => {
+  res.send(req.session)
+})
+
 router.post('/login', async (req, res, next) => {
     const { username, password } = req.body
   

@@ -10,7 +10,7 @@ router.get('/questions', async (req, res, next) => {
         Question.find({}, (err, qs) => {
             if (qs) {
               req.session.questions = qs
-              res.send('got qs')
+              res.send(qs)
             } else {
                 next(new Error('No qs found'))
             }
@@ -22,9 +22,10 @@ router.get('/questions', async (req, res, next) => {
 
 router.post('/questions/add', isAuthenticated, async (req, res, next) => {
     const { questionText, author } = req.body
+    const answer = ''
 
     try {
-        await Question.create({ questionText, author })
+        await Question.create({ questionText, author, answer })
         res.send('q is created')
     } catch {
         next(new Error('Could not create q'))
@@ -35,12 +36,12 @@ router.post('/questions/answer', isAuthenticated, async (req, res) => {
     const { _id, answer } = req.body
   
     try {
-      Question.findOne({ _id }, (err, q) => {
-        if (user) {
+      Question.findOneAndUpdate({ _id }, {answer: answer}, (err, q) => {
+        if (q) {
           q.answer = answer
-          res.send('got q')
+          res.send(q)
         } else {
-        next(new Error('Could not find q to answer'))
+          next(new Error('Could not find q to answer'))
         }
       })
     } catch {
